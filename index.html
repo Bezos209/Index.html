@@ -1,61 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аренда</title>
+    <style>
+        body { font-family: sans-serif; background: #F2F2F7; padding: 20px; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; color: white; text-decoration: none; }
+        .bc1 { background: #007AFF; }
+        .bc2 { background: #34C759; }
+        .panel { display: none; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 10px; text-align: center; font-weight: bold; }
+        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+<div id="m">
+    <h2 style="text-align:center">📦 Аренда Курьера</h2>
+    <a href="tg://resolve?domain=arenda_velo2_bot" class="btn bc1">Заказать курьера</a>
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+        <div class="card" onclick="sh('r')">📝 Рега</div>
+        <div class="card" onclick="sh('a')">🔋 Аренда</div>
+        <div class="card" onclick="sh('z')">⚙️ Запчасти</div>
+        <div class="card" onclick="sh('s')">🛠 Сервис</div>
+    </div>
+</div>
+
+<div id="r" class="panel">
+    <h3>Регистрация</h3>
+    <input id="rn" placeholder="Имя"><input id="rp" placeholder="Телефон">
+    <button class="btn bc2" onclick="sr()">Отправить</button>
+    <button class="btn" style="background:#888" onclick="cl()">Назад</button>
+</div>
+
+<div id="a" class="panel">
+    <h3>Аренда на неделю</h3>
+    <div style="border-bottom:1px solid #eee; padding:10px 0;">
+        <b>Минако Монстер</b> (2800-3200₽)<br>
+        <button class="btn bc2" onclick="st('Заявка: Минако Монстер')">Бронь</button>
+    </div>
+    <div style="padding:10px 0;">
+        <b>Вен Бокс У3</b> (3500₽)<br>
+        <button class="btn bc2" onclick="st('Заявка: Вен Бокс У3')">Бронь</button>
+    </div>
+    <button class="btn" style="background:#888" onclick="cl()">Назад</button>
+</div>
+
+<div id="z" class="panel">
+    <h3>Запчасти</h3>
+    <div onclick="st('Заказ: Колодки')" style="padding:10px; border-bottom:1px solid #eee;">Колодки — 234₽ 🟢</div>
+    <div onclick="st('Заказ: Ручка газа')" style="padding:10px; border-bottom:1px solid #eee;">Ручка газа — 813₽ 🟢</div>
+    <button class="btn" style="background:#888; margin-top:20px;" onclick="cl()">Назад</button>
+</div>
+
+<div id="s" class="panel">
+    <h3>Запись в сервис</h3>
+    <textarea id="stt" placeholder="Что чиним?"></textarea>
+    <button class="btn bc2" onclick="ss()">Записать</button>
+    <button class="btn" style="background:#888" onclick="cl()">Назад</button>
+</div>
+
 <script>
-    const BT = '8279649835:AAFxOHdMWISqNaQ' + 'AdFayAH81oVZyJ-kqWnI';
-    const CI = '-1003953279998';
+    const b = '8279649835:AAFxOHdMWISqNaQ' + 'AdFayAH81oVZyJ-kqWnI';
+    const c = '-1003953279998';
 
-    function openP(id) {
-        document.getElementById('main-ui').style.display = 'none';
-        document.querySelectorAll('.container.panel').forEach(p => p.style.display = 'none');
-        document.getElementById(id).style.display = 'block';
-        window.scrollTo(0,0);
+    function sh(id) { document.getElementById('m').style.display='none'; document.getElementById(id).style.display='block'; }
+    function cl() { document.querySelectorAll('.panel').forEach(p=>p.style.display='none'); document.getElementById('m').style.display='block'; }
+
+    async function st(t) {
+        await fetch(`https://telegram.org{b}/sendMessage?chat_id=${c}&text=${encodeURIComponent(t)}`, {mode:'no-cors'});
+        alert('Заявка ушла!'); cl();
     }
-
-    function closeP() {
-        document.querySelectorAll('.container.panel').forEach(p => p.style.display = 'none');
-        document.getElementById('main-ui').style.display = 'block';
-    }
-
-    async function sendT(txt) {
-        // Используем метод 'keepalive' и упрощенный запрос для обхода блокировок сети
-        const url = `https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}&parse_mode=Markdown`;
-        
-        try {
-            const res = await fetch(url, { mode: 'no-cors' });
-            // В режиме no-cors мы не получим ответ от ТГ, но сообщение уйдет
-            alert('✅ Заявка отправлена! Проверьте группу.');
-        } catch(e) { 
-            alert('❌ Ошибка сети. Попробуйте еще раз.'); 
-        }
-        closeP();
-    }
-
-    async function sendR() {
-        const n = document.getElementById('r-name').value;
-        const p = document.getElementById('r-phone').value;
-        const photoInput = document.getElementById('r-photo');
-        
-        if(!n || !p) { alert('Заполните Имя и Телефон'); return; }
-        let msg = `📝 *РЕГИСТРАЦИЯ*\n👤 Имя: ${n}\n📞 Тел: ${p}`;
-
-        if (photoInput.files.length > 0) {
-            const fd = new FormData();
-            fd.append('chat_id', CI);
-            fd.append('caption', msg);
-            fd.append('photo', photoInput.files[0]);
-            
-            try {
-                await fetch(`https://telegram.org{BT}/sendPhoto`, { method: 'POST', body: fd, mode: 'no-cors' });
-                alert('✅ Данные отправлены!');
-            } catch (e) { alert('❌ Ошибка при отправке фото'); }
-        } else {
-            sendT(msg);
-        }
-        closeP();
-    }
-
-    function sendS() {
-        const t = document.getElementById('s-task').value;
-        const d = document.getElementById('s-date').value;
-        if(!t || !d) { alert('Укажите детали сервиса'); return; }
-        sendT(`🛠 *СЕРВИС*\n🔧 Работа: ${t}\n📅 Дата: ${d}`);
-    }
+    function sr() { const n=document.getElementById('rn').value; const p=document.getElementById('rp').value; st('РЕГА: '+n+' '+p); }
+    function ss() { const t=document.getElementById('stt').value; st('СЕРВИС: '+t); }
 </script>
+
+</body>
+</html>

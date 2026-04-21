@@ -1,80 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Аренда</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Аренда Курьера</title>
     <style>
-        body { font-family: sans-serif; background: #F2F2F7; padding: 20px; }
-        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; text-align: center; color: white; text-decoration: none; }
-        .bc1 { background: #007AFF; }
-        .bc2 { background: #34C759; }
-        .panel { display: none; background: white; padding: 20px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 10px; text-align: center; font-weight: bold; }
-        input, textarea { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid #ccc; box-sizing: border-box; }
+        :root { --blue: #007AFF; --bg: #F2F2F7; }
+        body { font-family: -apple-system, system-ui, sans-serif; background: var(--bg); margin: 0; padding: 20px; -webkit-tap-highlight-color: transparent; }
+        .container { width: 100%; max-width: 400px; margin: 0 auto; }
+        .btn { display: block; width: 100%; padding: 16px; margin: 10px 0; border-radius: 14px; border: none; font-size: 17px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; }
+        .btn-client { background: var(--blue); color: white; }
+        .btn-courier { background: #34C759; color: white; }
+        .btn-back { background: #8E8E93; color: white; margin-top: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .card { background: white; padding: 25px 10px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-weight: 700; cursor: pointer; border: 1px solid rgba(0,0,0,0.05); }
+        .panel { display: none; background: white; padding: 25px; border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .item { border-bottom: 1px solid #F2F2F7; padding: 15px 0; display: flex; flex-direction: column; gap: 8px; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 5px 0; border-radius: 12px; border: 1px solid #DDD; background: #FAFAFA; font-size: 16px; box-sizing: border-box; }
+        h1, h3 { text-align: center; margin-top: 0; }
     </style>
 </head>
 <body>
 
-<div id="m">
-    <h2 style="text-align:center">📦 Аренда Курьера</h2>
-    <a href="tg://resolve?domain=arenda_velo2_bot" class="btn bc1">Заказать курьера</a>
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
-        <div class="card" onclick="sh('r')">📝 Рега</div>
-        <div class="card" onclick="sh('a')">🔋 Аренда</div>
-        <div class="card" onclick="sh('z')">⚙️ Запчасти</div>
-        <div class="card" onclick="sh('s')">🛠 Сервис</div>
+<div class="container" id="main-ui">
+    <h1>📦 Аренда Курьера</h1>
+    <a href="tg://resolve?domain=arenda_velo2_bot" class="btn btn-client">🙋‍♂️ Клиентам: Заказать</a>
+    
+    <h2 style="font-size: 19px; margin-top: 35px; text-align: center;">🚲 Курьерам</h2>
+    <div class="grid">
+        <div class="card" onclick="openP('reg-p')">📝 Регистрация</div>
+        <div class="card" onclick="openP('rent-p')">🔋 Аренда</div>
+        <div class="card" onclick="openP('parts-p')">⚙️ Запчасти</div>
+        <div class="card" onclick="openP('serv-p')">🛠 Сервис</div>
     </div>
 </div>
 
-<div id="r" class="panel">
+<!-- ПАНЕЛИ -->
+<div class="container panel" id="reg-p">
     <h3>Регистрация</h3>
-    <input id="rn" placeholder="Имя"><input id="rp" placeholder="Телефон">
-    <button class="btn bc2" onclick="sr()">Отправить</button>
-    <button class="btn" style="background:#888" onclick="cl()">Назад</button>
+    <input type="text" id="r-name" placeholder="Имя Фамилия">
+    <input type="tel" id="r-phone" placeholder="+7 (___) ___ - __ - __">
+    <label style="font-size: 13px; color: #666; margin-left: 5px;">Ваше фото:</label>
+    <input type="file" id="r-photo" accept="image/*" capture="user">
+    <button class="btn btn-courier" onclick="sendR()">Отправить Анкуту</button>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
 </div>
 
-<div id="a" class="panel">
+<div class="container panel" id="rent-p">
     <h3>Аренда на неделю</h3>
-    <div style="border-bottom:1px solid #eee; padding:10px 0;">
-        <b>Минако Монстер</b> (2800-3200₽)<br>
-        <button class="btn bc2" onclick="st('Заявка: Минако Монстер')">Бронь</button>
+    <div class="item">
+        <strong>⚡️ Минако Монстер про</strong>
+        <select id="m-var">
+            <option value="1 АКБ (2800₽)">1 Аккумулятор — 2800₽</option>
+            <option value="2 АКБ (3200₽)">2 Аккумулятора — 3200₽</option>
+        </select>
+        <button class="btn btn-courier" style="padding: 10px;" onclick="sendT('Бронь: Минако Монстер Про, ' + document.getElementById('m-var').value)">Забронировать</button>
     </div>
-    <div style="padding:10px 0;">
-        <b>Вен Бокс У3</b> (3500₽)<br>
-        <button class="btn bc2" onclick="st('Заявка: Вен Бокс У3')">Бронь</button>
+    <div class="item">
+        <strong>🚲 Вен Бокс У3</strong>
+        <p style="margin:0; color: #666;">Цена: 3500₽ / неделя</p>
+        <button class="btn btn-courier" style="padding: 10px;" onclick="sendT('Бронь: Вен Бокс У3 (3500₽)')">Забронировать</button>
     </div>
-    <button class="btn" style="background:#888" onclick="cl()">Назад</button>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
 </div>
 
-<div id="z" class="panel">
+<div class="container panel" id="parts-p">
     <h3>Запчасти</h3>
-    <div onclick="st('Заказ: Колодки')" style="padding:10px; border-bottom:1px solid #eee;">Колодки — 234₽ 🟢</div>
-    <div onclick="st('Заказ: Ручка газа')" style="padding:10px; border-bottom:1px solid #eee;">Ручка газа — 813₽ 🟢</div>
-    <button class="btn" style="background:#888; margin-top:20px;" onclick="cl()">Назад</button>
+    <div class="item">Колодки Минако — 234₽ <button class="btn btn-courier" style="padding:8px" onclick="sendT('Заказ: Колодки Минако')">Купить</button></div>
+    <div class="item">Ручка газа — 813₽ <button class="btn btn-courier" style="padding:8px" onclick="sendT('Заказ: Ручка газа')">Купить</button></div>
+    <div class="item">Зеркало — 455₽ <button class="btn btn-courier" style="padding:8px" onclick="sendT('Заказ: Зеркало')">Купить</button></div>
+    <div class="item">Ручка тормоза — 338₽ <button class="btn btn-courier" style="padding:8px" onclick="sendT('Заказ: Ручка тормоза')">Купить</button></div>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
 </div>
 
-<div id="s" class="panel">
-    <h3>Запись в сервис</h3>
-    <textarea id="stt" placeholder="Что чиним?"></textarea>
-    <button class="btn bc2" onclick="ss()">Записать</button>
-    <button class="btn" style="background:#888" onclick="cl()">Назад</button>
+<div class="container panel" id="serv-p">
+    <h3>Запись на ремонт</h3>
+    <textarea id="s-task" rows="3" placeholder="Опишите поломку..."></textarea>
+    <input type="date" id="s-date">
+    <button class="btn btn-courier" onclick="sendS()">Записаться в сервис</button>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
 </div>
 
 <script>
-    const b = '8279649835:AAFxOHdMWISqNaQ' + 'AdFayAH81oVZyJ-kqWnI';
-    const c = '-1003953279998';
+    const BT = '8279649835:AAFxOHdMWISqNaQ' + 'AdFayAH81oVZyJ-kqWnI';
+    const CI = '-1003953279998';
 
-    function sh(id) { document.getElementById('m').style.display='none'; document.getElementById(id).style.display='block'; }
-    function cl() { document.querySelectorAll('.panel').forEach(p=>p.style.display='none'); document.getElementById('m').style.display='block'; }
-
-    async function st(t) {
-        await fetch(`https://telegram.org{b}/sendMessage?chat_id=${c}&text=${encodeURIComponent(t)}`, {mode:'no-cors'});
-        alert('Заявка ушла!'); cl();
+    function openP(id) {
+        document.getElementById('main-ui').style.display = 'none';
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        document.getElementById(id).style.display = 'block';
+        window.scrollTo(0,0);
     }
-    function sr() { const n=document.getElementById('rn').value; const p=document.getElementById('rp').value; st('РЕГА: '+n+' '+p); }
-    function ss() { const t=document.getElementById('stt').value; st('СЕРВИС: '+t); }
-</script>
 
+    function closeP() {
+        document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
+        document.getElementById('main-ui').style.display = 'block';
+    }
+
+    async function sendT(txt) {
+        try {
+            const res = await fetch(`https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}&parse_mode=Markdown`);
+            const data = await res.json();
+            if(data.ok) alert('✅ Успешно отправлено!');
+            else alert('❌ Ошибка: ' + data.description);
+        } catch(e) { alert('❌ Ошибка сети'); }
+        closeP();
+    }
+
+    async function sendR() {
+        const n = document.getElementById('r-name').value;
+        const p = document.getElementById('r-phone').value;
+        const photo = document.getElementById('r-photo').files[0];
+        if(!n || !p) { alert('Заполните Имя и Телефон'); return; }
+
+        let msg = `📝 *РЕГИСТРАЦИЯ*\n👤 Имя: ${n}\n📞 Тел: ${p}`;
+        if (photo) {
+            const fd = new FormData();
+            fd.append('chat_id', CI);
+            fd.append('caption', msg);
+            fd.append('photo', photo);
+            const res = await fetch(`https://telegram.org{BT}/sendPhoto`, { method: 'POST', body: fd });
+            const data = await res.json();
+            if(data.ok) alert('✅ Анкета с фото отправлена!');
+            else alert('❌ Ошибка: ' + data.description);
+        } else {
+            sendT(msg);
+        }
+        closeP();
+    }
+
+    function sendS() {
+        const t = document.getElementById('s-task').value;
+        const d = document.getElementById('s-date').value;
+        if(!t || !d) { alert('Укажите что чинить и дату'); return; }
+        sendT(`🛠 *СЕРВИС*\n🔧 Работа: ${t}\n📅 Дата: ${d}`);
+    }
+</script>
 </body>
 </html>

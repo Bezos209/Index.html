@@ -17,13 +17,15 @@
         .panel { display: none; background: white; padding: 25px; border-radius: 24px; width: 100%; box-sizing: border-box; }
         .item { border-bottom: 1px solid #F2F2F7; padding: 15px 0; }
         input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #DDD; font-size: 16px; box-sizing: border-box; }
+        h1, h3 { text-align: center; margin-top: 0; }
     </style>
 </head>
 <body>
 
 <div class="container" id="main-ui">
-    <h1 style="text-align:center">📦 Аренда Курьера</h1>
+    <h1>📦 Аренда Курьера</h1>
     <a href="tg://resolve?domain=arenda_velo2_bot" class="btn btn-blue">🙋‍♂️ Клиентам: Заказать</a>
+    
     <h2 style="font-size: 19px; margin-top: 35px; text-align: center;">🚲 Курьерам</h2>
     <div class="grid">
         <div class="card" onclick="openP('reg-p')">📝 Регистрация</div>
@@ -48,22 +50,22 @@
     <div class="item">
         <strong>Минако Монстер про</strong>
         <select id="m-var"><option value="1 АКБ (2800₽)">1 АКБ — 2800₽</option><option value="2 АКБ (3200₽)">2 АКБ — 3200₽</option></select>
-        <button class="btn btn-green" onclick="sendT('Бронь: Минако, ' + document.getElementById('m-var').value)">Забронировать</button>
+        <button class="btn btn-green" onclick="sendT('[АРЕНДА] Минако Монстер Про, ' + document.getElementById('m-var').value)">Забронировать</button>
     </div>
     <div class="item">
         <strong>Вен Бокс У3</strong> — 3500₽<br>
-        <button class="btn btn-green" onclick="sendT('Бронь: Вен Бокс У3')">Забронировать</button>
+        <button class="btn btn-green" onclick="sendT('[АРЕНДА] Вен Бокс У3')">Забронировать</button>
     </div>
     <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
 <!-- ЗАПЧАСТИ -->
 <div class="container panel" id="parts-p">
-    <h3>Запчасти в наличии</h3>
-    <div class="item">Колодки Минако — 234₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Колодки')">Купить</button></div>
-    <div class="item">Ручка газа — 813₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Ручка газа')">Купить</button></div>
-    <div class="item">Зеркало — 455₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Зеркало')">Купить</button></div>
-    <div class="item">Ручка тормоза — 338₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Ручка тормоза')">Купить</button></div>
+    <h3>Запчасти</h3>
+    <div class="item">Колодки Минако — 234₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('[ЗАПЧАСТЬ] Колодки Минако')">Купить</button></div>
+    <div class="item">Ручка газа — 813₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('[ЗАПЧАСТЬ] Ручка газа')">Купить</button></div>
+    <div class="item">Зеркало — 455₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('[ЗАПЧАСТЬ] Зеркало')">Купить</button></div>
+    <div class="item">Ручка тормоза — 338₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('[ЗАПЧАСТЬ] Ручка тормоза')">Купить</button></div>
     <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
@@ -77,8 +79,7 @@
 </div>
 
 <script>
-    const BT = '8279649835:AAFxOHdMWISqNaQ' + 'AdFayAH81oVZyJ-kqWnI';
-    const CI = '404283957'; // Твой личный ID
+    const BOT_USER = 'arenda_velo2_bot';
 
     function openP(id) {
         document.getElementById('main-ui').style.display = 'none';
@@ -92,25 +93,22 @@
     }
 
     function sendT(txt) {
-        const url = `https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}&parse_mode=Markdown`;
-        const img = new Image();
-        img.src = url;
-        alert('✅ Заявка отправлена!');
-        closeP();
+        // Используем Deep Link для гарантированной отправки через бот-маршрутизатор
+        window.location.href = `tg://resolve?domain=${BOT_USER}&text=${encodeURIComponent(txt)}`;
     }
 
     function sendR() {
         const n = document.getElementById('r-name').value;
         const p = document.getElementById('r-phone').value;
-        if(!n || !p) { alert('Заполните Имя и Телефон'); return; }
-        sendT(`📝 *РЕГИСТРАЦИЯ КУРЬЕРА*\n👤 Имя: ${n}\n📞 Тел: ${p}`);
+        if(!n || !p) { alert('Заполните поля'); return; }
+        sendT(`[РЕГИСТРАЦИЯ] Имя: ${n}, Тел: ${p}`);
     }
 
     function sendS() {
         const t = document.getElementById('s-task').value;
         const d = document.getElementById('s-date').value;
         if(!t || !d) { alert('Заполните все поля'); return; }
-        sendT(`🛠 *СЕРВИС*\n🔧 Что: ${t}\n📅 Дата: ${d}`);
+        sendT(`[СЕРВИС] Задача: ${t}, Дата: ${d}`);
     }
 </script>
 </body>

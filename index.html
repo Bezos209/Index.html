@@ -1,66 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аренда Курьера</title>
+    <style>
+        :root { --apple-blue: #007AFF; --apple-bg: #F2F2F7; }
+        body { font-family: -apple-system, sans-serif; background: var(--apple-bg); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 400px; }
+        .btn { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; font-size: 16px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; box-sizing: border-box; }
+        .btn-client { background: var(--apple-blue); color: white; }
+        .btn-courier { background: #34C759; color: white; }
+        .btn-back { background: #8E8E93; color: white; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .card { background: white; padding: 20px; border-radius: 18px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); font-weight: 600; cursor: pointer; }
+        .form-panel { display: none; background: white; padding: 20px; border-radius: 20px; width: 100%; box-sizing: border-box; }
+        .item { border-bottom: 1px solid #eee; padding: 10px 0; margin-bottom: 10px; }
+        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="main-ui">
+    <h1 style="text-align:center">📦 Аренда Курьера</h1>
+    <a href="tg://resolve?domain=arenda_velo2_bot" class="btn btn-client">🙋‍♂️ Клиентам: Заказать</a>
+    <h2 style="font-size: 18px; margin-top: 30px;">🚲 Курьерам</h2>
+    <div class="grid">
+        <div class="card" onclick="openP('reg-p')">📝 Регистрация</div>
+        <div class="card" onclick="openP('rent-p')">🔋 Аренда</div>
+        <div class="card" onclick="openP('parts-p')">⚙️ Запчасти</div>
+        <div class="card" onclick="openP('serv-p')">🛠 Сервис</div>
+    </div>
+</div>
+
+<div class="container form-panel" id="reg-p">
+    <h3>Регистрация</h3>
+    <input type="text" id="r-name" placeholder="ФИО">
+    <input type="tel" id="r-phone" placeholder="Телефон">
+    <input type="file" id="r-photo" accept="image/*" capture="user">
+    <button class="btn btn-courier" onclick="sendR()">Отправить</button>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
+</div>
+
+<div class="container form-panel" id="rent-p">
+    <h3>Аренда (на неделю)</h3>
+    <div class="item">
+        <strong>Минако Монстер про</strong><br>
+        <select id="m-var">
+            <option value="1 АКБ (2800₽)">1 АКБ — 2800₽</option>
+            <option value="2 АКБ (3200₽)">2 АКБ — 3200₽</option>
+        </select>
+        <button class="btn btn-courier" onclick="sendT('Бронь: Минако Монстер Про, ' + document.getElementById('m-var').value)">Забронировать</button>
+    </div>
+    <div class="item">
+        <strong>Вен Бокс У3</strong> — 3500₽<br>
+        <button class="btn btn-courier" onclick="sendT('Бронь: Вен Бокс У3 (3500₽)')">Забронировать</button>
+    </div>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
+</div>
+
+<div class="container form-panel" id="parts-p">
+    <h3>Запчасти</h3>
+    <div class="item">Колодки Минако — 234₽ <button onclick="sendT('Заказ: Колодки')">Купить</button></div>
+    <div class="item">Ручка газа — 813₽ <button onclick="sendT('Заказ: Ручка газа')">Купить</button></div>
+    <div class="item">Зеркало — 455₽ <button onclick="sendT('Заказ: Зеркало')">Купить</button></div>
+    <div class="item">Ручка тормоза — 338₽ <button onclick="sendT('Заказ: Ручка тормоза')">Купить</button></div>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
+</div>
+
+<div class="container form-panel" id="serv-p">
+    <h3>Запись в сервис</h3>
+    <textarea id="s-task" placeholder="Что чиним?"></textarea>
+    <input type="date" id="s-date">
+    <button class="btn btn-courier" onclick="sendS()">Записаться</button>
+    <button class="btn btn-back" onclick="closeP()">Назад</button>
+</div>
+
 <script>
     const t1 = '8279649835:AAFxOHdMWISqNaQ';
     const t2 = 'AdFayAH81oVZyJ-kqWnI';
-    const BOT_TOKEN = t1 + t2;
-    const CHAT_ID = '-1003953279998';
+    const BT = t1 + t2;
+    const CI = '-1003953279998';
 
-    function openPanel(id) {
+    function openP(id) {
         document.getElementById('main-ui').style.display = 'none';
         document.getElementById(id).style.display = 'block';
-        window.scrollTo(0, 0);
     }
 
-    function closeAll() {
+    function closeP() {
         const panels = document.getElementsByClassName('form-panel');
         for (let p of panels) p.style.display = 'none';
         document.getElementById('main-ui').style.display = 'block';
     }
 
-    async function sendMsg(text) {
-        const url = `https://telegram.org{BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`;
-        try {
-            const response = await fetch(url);
-            const result = await response.json();
-            if (result.ok) {
-                alert('✅ Заявка отправлена в группу!');
-            } else {
-                alert('❌ Ошибка Telegram: ' + result.description);
-            }
-        } catch (e) {
-            alert('❌ Ошибка сети: проверьте интернет');
-        }
-        closeAll();
+    async function sendT(txt) {
+        const url = `https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if(data.ok) alert('✅ Отправлено!');
+        else alert('❌ Ошибка: ' + data.description);
+        closeP();
     }
 
-    async function sendReg() {
-        const name = document.getElementById('reg-name').value;
-        const phone = document.getElementById('reg-phone').value;
-        const photoInput = document.getElementById('reg-photo');
-        let caption = `📝 *РЕГИСТРАЦИЯ*\n👤 ФИО: ${name}\n📞 Тел: ${phone}`;
+    async function sendR() {
+        const n = document.getElementById('r-name').value;
+        const p = document.getElementById('r-phone').value;
+        const photo = document.getElementById('r-photo').files[0];
+        let msg = `📝 РЕГИСТРАЦИЯ\n👤 Имя: ${n}\n📞 Тел: ${p}`;
         
-        if (photoInput.files.length > 0) {
+        if (photo) {
             const fd = new FormData();
-            fd.append('chat_id', CHAT_ID);
-            fd.append('caption', caption);
-            fd.append('photo', photoInput.files[0]);
-            
-            try {
-                const res = await fetch(`https://telegram.org{BOT_TOKEN}/sendPhoto`, { method: 'POST', body: fd });
-                const result = await res.json();
-                if (result.ok) alert('✅ Данные и фото отправлены!');
-                else alert('❌ Ошибка фото: ' + result.description);
-            } catch (e) { alert('❌ Ошибка сети при отправке фото'); }
+            fd.append('chat_id', CI);
+            fd.append('caption', msg);
+            fd.append('photo', photo);
+            const res = await fetch(`https://telegram.org{BT}/sendPhoto`, { method: 'POST', body: fd });
+            const data = await res.json();
+            if(data.ok) alert('✅ Отправлено с фото!');
+            else alert('❌ Ошибка фото: ' + data.description);
         } else {
-            await sendMsg(caption);
+            sendT(msg);
         }
-        closeAll();
+        closeP();
     }
 
-    async function sendService() {
-        const task = document.getElementById('serv-task').value;
-        const date = document.getElementById('serv-date').value;
-        const time = document.getElementById('serv-time').value;
-        if (!task || !date) { alert('Заполните описание и дату'); return; }
-        await sendMsg(`🛠 *СЕРВИС*\n🔧 Что: ${task}\n📅 Дата: ${date}\n⏰ Время: ${time}`);
+    async function sendS() {
+        const t = document.getElementById('s-task').value;
+        const d = document.getElementById('s-date').value;
+        sendT(`🛠 СЕРВИС\n🔧 Что: ${t}\n📅 Дата: ${d}`);
     }
 </script>
+</body>
+</html>

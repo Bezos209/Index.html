@@ -2,71 +2,79 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Аренда Курьера</title>
     <style>
         :root { --blue: #007AFF; --bg: #F2F2F7; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 20px; text-align: center; }
-        .container { width: 100%; max-width: 400px; margin: 0 auto; }
-        .btn { display: block; width: 100%; padding: 16px; margin: 10px 0; border-radius: 14px; border: none; font-size: 17px; font-weight: 600; cursor: pointer; color: white; text-decoration: none; box-sizing: border-box; }
-        .btn-client { background: var(--blue); }
-        .btn-courier { background: #34C759; }
+        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 400px; }
+        .btn { display: block; width: 100%; padding: 16px; margin: 10px 0; border-radius: 14px; border: none; font-size: 17px; font-weight: 600; cursor: pointer; text-align: center; text-decoration: none; color: white; box-sizing: border-box; }
+        .btn-blue { background: var(--blue); }
+        .btn-green { background: #34C759; }
+        .btn-grey { background: #8E8E93; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
-        .card { background: white; padding: 20px; border-radius: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); font-weight: 700; cursor: pointer; }
-        .panel { display: none; background: white; padding: 20px; border-radius: 20px; margin-top: 10px; text-align: left; }
-        input, select, textarea { width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box; font-size: 16px; }
+        .card { background: white; padding: 25px 10px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); font-weight: 700; cursor: pointer; }
+        .panel { display: none; background: white; padding: 25px; border-radius: 24px; width: 100%; box-sizing: border-box; }
+        .item { border-bottom: 1px solid #F2F2F7; padding: 15px 0; }
+        input, select, textarea { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #DDD; font-size: 16px; box-sizing: border-box; }
     </style>
 </head>
 <body>
 
 <div class="container" id="main-ui">
-    <h1>📦 Аренда Курьера</h1>
-    <a href="tg://resolve?domain=arenda_velo2_bot" class="btn btn-client">🙋‍♂️ Клиентам: Заказать</a>
+    <h1 style="text-align:center">📦 Аренда Курьера</h1>
+    <a href="tg://resolve?domain=arenda_velo2_bot" class="btn btn-blue">🙋‍♂️ Клиентам: Заказать</a>
     
-    <h2 style="font-size: 18px; margin-top: 30px;">🚲 Курьерам</h2>
+    <h2 style="font-size: 19px; margin-top: 35px; text-align: center;">🚲 Курьерам</h2>
     <div class="grid">
-        <div class="card" onclick="openP('reg-p')">📝 Рега</div>
+        <div class="card" onclick="openP('reg-p')">📝 Регистрация</div>
         <div class="card" onclick="openP('rent-p')">🔋 Аренда</div>
-        <div class="card" onclick="openP('parts-p')">⚙️ Части</div>
+        <div class="card" onclick="openP('parts-p')">⚙️ Запчасти</div>
         <div class="card" onclick="openP('serv-p')">🛠 Сервис</div>
     </div>
 </div>
 
+<!-- РЕГИСТРАЦИЯ -->
 <div class="container panel" id="reg-p">
-    <h3>Регистрация</h3>
-    <input type="text" id="r-name" placeholder="ФИО">
-    <input type="tel" id="r-phone" placeholder="Телефон">
-    <button class="btn btn-courier" onclick="sendR()">Отправить</button>
-    <button class="btn" style="background:#8e8e93" onclick="closeP()">Назад</button>
+    <h3>Регистрация курьера</h3>
+    <input type="text" id="r-name" placeholder="Имя Фамилия">
+    <input type="tel" id="r-phone" placeholder="Номер телефона">
+    <label style="font-size: 13px; color: #666; display: block; margin-top: 10px;">Прикрепите ваше фото (селфи):</label>
+    <input type="file" id="r-photo" accept="image/*" capture="user">
+    <button class="btn btn-green" onclick="sendR()">Отправить анкету</button>
+    <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
+<!-- ОСТАЛЬНЫЕ ПАНЕЛИ (Аренда, Запчасти, Сервис) -->
 <div class="container panel" id="rent-p">
     <h3>Аренда на неделю</h3>
-    <div style="padding:10px 0; border-bottom:1px solid #eee">
-        <b>Минако Монстер про</b><br>
-        <select id="m-var"><option value="1 АКБ">1 АКБ — 2800₽</option><option value="2 АКБ">2 АКБ — 3200₽</option></select>
-        <button class="btn btn-courier" onclick="sendT('Аренда: Минако ' + document.getElementById('m-var').value)">Бронь</button>
+    <div class="item">
+        <strong>Минако Монстер про</strong>
+        <select id="m-var"><option value="1 АКБ (2800₽)">1 АКБ — 2800₽</option><option value="2 АКБ (3200₽)">2 АКБ — 3200₽</option></select>
+        <button class="btn btn-green" onclick="sendT('Бронь: Минако, ' + document.getElementById('m-var').value)">Забронировать</button>
     </div>
-    <div style="padding:10px 0;">
-        <b>Вен Бокс У3</b> (3500₽)<br>
-        <button class="btn btn-courier" onclick="sendT('Аренда: Вен Бокс У3')">Бронь</button>
+    <div class="item">
+        <strong>Вен Бокс У3</strong> — 3500₽<br>
+        <button class="btn btn-green" onclick="sendT('Бронь: Вен Бокс У3')">Забронировать</button>
     </div>
-    <button class="btn" style="background:#8e8e93" onclick="closeP()">Назад</button>
+    <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
 <div class="container panel" id="parts-p">
-    <h3>Запчасти</h3>
-    <div style="padding:10px 0; border-bottom:1px solid #eee">Колодки — 234₽ <button onclick="sendT('Запчасть: Колодки')">Купить</button></div>
-    <div style="padding:10px 0;">Ручка газа — 813₽ <button onclick="sendT('Запчасть: Ручка газа')">Купить</button></div>
-    <button class="btn" style="background:#8e8e93; margin-top:10px;" onclick="closeP()">Назад</button>
+    <h3>Запчасти в наличии</h3>
+    <div class="item">Колодки Минако — 234₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Колодки')">Купить</button></div>
+    <div class="item">Ручка газа — 813₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Ручка газа')">Купить</button></div>
+    <div class="item">Зеркало — 455₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Зеркало')">Купить</button></div>
+    <div class="item">Ручка тормоза — 338₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Ручка тормоза')">Купить</button></div>
+    <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
 <div class="container panel" id="serv-p">
     <h3>Запись в сервис</h3>
-    <textarea id="s-task" placeholder="Что сломалось?"></textarea>
+    <textarea id="s-task" placeholder="Опишите, что нужно починить..."></textarea>
     <input type="date" id="s-date">
-    <button class="btn btn-courier" onclick="sendS()">Записаться</button>
-    <button class="btn" style="background:#8e8e93" onclick="closeP()">Назад</button>
+    <button class="btn btn-green" onclick="sendS()">Записаться</button>
+    <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
 <script>
@@ -77,6 +85,7 @@
         document.getElementById('main-ui').style.display = 'none';
         document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
         document.getElementById(id).style.display = 'block';
+        window.scrollTo(0,0);
     }
 
     function closeP() {
@@ -85,24 +94,43 @@
     }
 
     async function sendT(txt) {
-        const url = `https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}`;
+        const url = `https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}&parse_mode=Markdown`;
         try {
             await fetch(url, {mode: 'no-cors'});
-            alert('✅ Заявка ушла!');
+            alert('✅ Заявка отправлена!');
         } catch(e) { alert('Ошибка сети'); }
         closeP();
     }
 
-    function sendR() {
+    async function sendR() {
         const n = document.getElementById('r-name').value;
         const p = document.getElementById('r-phone').value;
-        sendT(`📝 РЕГА: ${n}, тел: ${p}`);
+        const photoInput = document.getElementById('r-photo');
+        
+        if(!n || !p) { alert('Заполните Имя и Телефон'); return; }
+        let msg = `📝 *РЕГИСТРАЦИЯ КУРЬЕРА*\n👤 Имя: ${n}\n📞 Тел: ${p}`;
+
+        if (photoInput.files.length > 0) {
+            const fd = new FormData();
+            fd.append('chat_id', CI);
+            fd.append('caption', msg);
+            fd.append('photo', photoInput.files[0]);
+            
+            try {
+                await fetch(`https://telegram.org{BT}/sendPhoto`, { method: 'POST', body: fd, mode: 'no-cors' });
+                alert('✅ Анкета с фото отправлена!');
+            } catch (e) { alert('Ошибка при отправке'); }
+        } else {
+            sendT(msg);
+        }
+        closeP();
     }
 
     function sendS() {
         const t = document.getElementById('s-task').value;
         const d = document.getElementById('s-date').value;
-        sendT(`🛠 СЕРВИС: ${t}, дата: ${d}`);
+        if(!t || !d) { alert('Заполните все поля'); return; }
+        sendT(`🛠 *СЕРВИС*\n🔧 Что: ${t}\n📅 Дата: ${d}`);
     }
 </script>
 </body>

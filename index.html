@@ -34,18 +34,14 @@
     </div>
 </div>
 
-<!-- РЕГИСТРАЦИЯ -->
 <div class="container panel" id="reg-p">
     <h3>Регистрация курьера</h3>
     <input type="text" id="r-name" placeholder="Имя Фамилия">
     <input type="tel" id="r-phone" placeholder="Номер телефона">
-    <label style="font-size: 13px; color: #666; display: block; margin-top: 10px;">Прикрепите ваше фото (селфи):</label>
-    <input type="file" id="r-photo" accept="image/*" capture="user">
     <button class="btn btn-green" onclick="sendR()">Отправить анкету</button>
     <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
-<!-- ОСТАЛЬНЫЕ ПАНЕЛИ (Аренда, Запчасти, Сервис) -->
 <div class="container panel" id="rent-p">
     <h3>Аренда на неделю</h3>
     <div class="item">
@@ -64,14 +60,12 @@
     <h3>Запчасти в наличии</h3>
     <div class="item">Колодки Минако — 234₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Колодки')">Купить</button></div>
     <div class="item">Ручка газа — 813₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Ручка газа')">Купить</button></div>
-    <div class="item">Зеркало — 455₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Зеркало')">Купить</button></div>
-    <div class="item">Ручка тормоза — 338₽ <button class="btn btn-green" style="padding:8px" onclick="sendT('Заказ: Ручка тормоза')">Купить</button></div>
     <button class="btn btn-grey" onclick="closeP()">Назад</button>
 </div>
 
 <div class="container panel" id="serv-p">
     <h3>Запись в сервис</h3>
-    <textarea id="s-task" placeholder="Опишите, что нужно починить..."></textarea>
+    <textarea id="s-task" placeholder="Что нужно починить?"></textarea>
     <input type="date" id="s-date">
     <button class="btn btn-green" onclick="sendS()">Записаться</button>
     <button class="btn btn-grey" onclick="closeP()">Назад</button>
@@ -85,7 +79,6 @@
         document.getElementById('main-ui').style.display = 'none';
         document.querySelectorAll('.panel').forEach(p => p.style.display = 'none');
         document.getElementById(id).style.display = 'block';
-        window.scrollTo(0,0);
     }
 
     function closeP() {
@@ -93,44 +86,31 @@
         document.getElementById('main-ui').style.display = 'block';
     }
 
-    async function sendT(txt) {
-        const url = `https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}&parse_mode=Markdown`;
-        try {
-            await fetch(url, {mode: 'no-cors'});
-            alert('✅ Заявка отправлена!');
-        } catch(e) { alert('Ошибка сети'); }
+    // САМЫЙ НАДЕЖНЫЙ МЕТОД: Создание невидимого изображения для отправки
+    function sendT(txt) {
+        const url = `https://telegram.org{BT}/sendMessage?chat_id=${CI}&text=${encodeURIComponent(txt)}`;
+        
+        // Создаем элемент изображения, который "загрузит" ссылку и тем самым отправит данные
+        const img = new Image();
+        img.src = url;
+        
+        // Показываем успех сразу, так как запрос ушел в момент присвоения src
+        alert('✅ Заявка отправлена!');
         closeP();
     }
 
-    async function sendR() {
+    function sendR() {
         const n = document.getElementById('r-name').value;
         const p = document.getElementById('r-phone').value;
-        const photoInput = document.getElementById('r-photo');
-        
         if(!n || !p) { alert('Заполните Имя и Телефон'); return; }
-        let msg = `📝 *РЕГИСТРАЦИЯ КУРЬЕРА*\n👤 Имя: ${n}\n📞 Тел: ${p}`;
-
-        if (photoInput.files.length > 0) {
-            const fd = new FormData();
-            fd.append('chat_id', CI);
-            fd.append('caption', msg);
-            fd.append('photo', photoInput.files[0]);
-            
-            try {
-                await fetch(`https://telegram.org{BT}/sendPhoto`, { method: 'POST', body: fd, mode: 'no-cors' });
-                alert('✅ Анкета с фото отправлена!');
-            } catch (e) { alert('Ошибка при отправке'); }
-        } else {
-            sendT(msg);
-        }
-        closeP();
+        sendT(`📝 РЕГИСТРАЦИЯ: ${n}, тел: ${p}`);
     }
 
     function sendS() {
         const t = document.getElementById('s-task').value;
         const d = document.getElementById('s-date').value;
         if(!t || !d) { alert('Заполните все поля'); return; }
-        sendT(`🛠 *СЕРВИС*\n🔧 Что: ${t}\n📅 Дата: ${d}`);
+        sendT(`🛠 СЕРВИС: ${t}, дата: ${d}`);
     }
 </script>
 </body>

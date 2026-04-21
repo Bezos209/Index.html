@@ -2,85 +2,147 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Аренда Курьера</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="format-detection" content="telephone=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аренда Курьера PWA</title>
     <style>
+        :root {
+            --apple-blue: #007AFF;
+            --apple-bg: #F2F2F7;
+            --card-bg: #FFFFFF;
+        }
         body {
-            margin: 0; padding: 0; background: #f4f4f7;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
+            background-color: var(--apple-bg);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
-        header { margin-top: 4.5rem; text-align: center; }
-        .logo-text { font-weight: 800; font-size: 1.7rem; color: #1c1c1e; letter-spacing: -0.5px; }
-        
-        .card {
-            background: #ffffff; border-radius: 35px; padding: 2.5rem 1.5rem;
-            margin: 2.5rem 0; width: 85%; max-width: 360px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.07); text-align: center;
-        }
-        h2 { margin: 0 0 2rem 0; font-size: 1.4rem; font-weight: 700; color: #1c1c1e; }
-        
+        .container { width: 100%; max-width: 400px; }
+        .header { text-align: center; margin-bottom: 30px; }
         .btn {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; height: 60px; margin: 14px 0;
-            font-size: 1.15rem; font-weight: 600; border-radius: 18px;
-            text-decoration: none; transition: all 0.2s ease;
-            -webkit-tap-highlight-color: transparent;
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin: 10px 0;
+            border-radius: 15px;
+            border: none;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s;
         }
-        .btn:active { transform: scale(0.96); opacity: 0.9; }
+        .btn:active { transform: scale(0.98); }
+        .btn-client { background-color: var(--apple-blue); color: white; }
+        .btn-courier { background-color: #34C759; color: white; }
         
-        .main-action { 
-            background: #0088cc; color: #ffffff; 
-            box-shadow: 0 8px 20px rgba(0, 136, 204, 0.3);
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .card {
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            font-size: 14px;
+            font-weight: 500;
         }
-        
-        .outline-phone {
-            background: #ffffff; color: #34c759;
-            border: 2px solid #34c759;
+        .section-title { font-size: 20px; font-weight: 700; margin-top: 30px; width: 100%; }
+        input, select, textarea {
+            width: 100%; padding: 12px; margin: 8px 0; border-radius: 10px; border: 1px solid #ddd; box-sizing: border-box;
         }
-
-        .apple-btn { 
-            background: #1c1c1e; color: #ffffff; 
-            margin-top: 25px; height: 50px; font-size: 0.95rem;
-        }
-
-        .icon { margin-right: 12px; font-size: 1.4rem; }
-        .divider { 
-            margin-top: 30px; padding-top: 20px; 
-            border-top: 1px solid #f0f0f0; 
-            color: #8e8e93; font-size: 0.85rem; 
-        }
+        #registration-form, #service-form { display: none; background: white; padding: 20px; border-radius: 20px; margin-top: 15px; }
     </style>
 </head>
 <body>
 
-<header>
-    <div class="logo-text">Аренда Курьера 📦</div>
-</header>
+<div class="container">
+    <div class="header">
+        <h1>📦 Аренда Курьера</h1>
+    </div>
 
-<div class="card">
-    <h2>Оформить заказ</h2>
+    <!-- БЛОК КЛИЕНТА -->
+    <a href="tg://resolve?domain=arenda_velo2_bot" class="btn btn-client">🙋‍♂️ Клиентам: Заказать</a>
+
+    <div class="section-title">🚲 Курьерам</div>
     
-    <!-- Ссылка на вашего основного рабочего бота -->
-    <a href="tg://resolve?domain=arenda_kuriera_bot" class="btn main-action">
-        <span class="icon">✈️</span> Заказать в Telegram
-    </a>
-    
-    <!-- Кнопка с вашим телефоном -->
-    <a href="tel:+79236514917" class="btn outline-phone">
-        <span class="icon">📞</span> Позвонить нам
-    </a>
-    
-    <div class="divider">Для курьеров</div>
-    
-    <a href="tg://resolve?domain=arenda_kuriera_bot" class="btn apple-btn">
-        <span class="icon"></span> Личный кабинет
-    </a>
+    <div class="grid">
+        <div class="card" onclick="showForm('registration-form')">📝 Регистрация</div>
+        <div class="card" onclick="alert('Каталог в разработке')">🔋 Аренда</div>
+        <div class="card" onclick="alert('Магазин в разработке')">⚙️ Запчасти</div>
+        <div class="card" onclick="showForm('service-form')">🛠 Сервис</div>
+    </div>
+
+    <!-- ФОРМА РЕГИСТРАЦИИ -->
+    <div id="registration-form">
+        <h3>Анкета курьера</h3>
+        <input type="text" id="reg-name" placeholder="ФИО">
+        <input type="tel" id="reg-phone" placeholder="+7 (999) 000-00-00">
+        <label>Фото (селфи):</label>
+        <input type="file" id="reg-photo" accept="image/*" capture="user">
+        <button class="btn btn-courier" onclick="sendReg()">Отправить</button>
+    </div>
+
+    <!-- ФОРМА СЕРВИСА -->
+    <div id="service-form">
+        <h3>Запись в сервис</h3>
+        <textarea id="service-task" placeholder="Что нужно починить?"></textarea>
+        <input type="date" id="service-date">
+        <select id="service-time">
+            <option value="10:00">10:00</option>
+            <option value="12:00">12:00</option>
+            <option value="14:00">14:00</option>
+            <option value="16:00">16:00</option>
+            <option value="18:00">18:00</option>
+        </select>
+        <button class="btn btn-courier" onclick="sendService()">Записаться</button>
+    </div>
 </div>
+
+<script>
+    const BOT_TOKEN = '8279649835:AAFxOHdMWISqNaQAdFayAH81oVZyJ-kqWnI';
+    const CHAT_ID = '-1003953279998';
+
+    function showForm(id) {
+        document.getElementById('registration-form').style.display = 'none';
+        document.getElementById('service-form').style.display = 'none';
+        document.getElementById(id).style.display = 'block';
+    }
+
+    async function sendReg() {
+        const name = document.getElementById('reg-name').value;
+        const phone = document.getElementById('reg-phone').value;
+        const photo = document.getElementById('reg-photo').files[0];
+
+        let text = `📝 **НОВАЯ РЕГИСТРАЦИЯ**\n👤 Имя: ${name}\n📞 Тел: ${phone}`;
+        
+        if (photo) {
+            const formData = new FormData();
+            formData.append('chat_id', CHAT_ID);
+            formData.append('caption', text);
+            formData.append('photo', photo);
+            await fetch(`https://telegram.org{BOT_TOKEN}/sendPhoto`, { method: 'POST', body: formData });
+        } else {
+            await fetch(`https://telegram.org{BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+        }
+        alert('Заявка отправлена!');
+        location.reload();
+    }
+
+    async function sendService() {
+        const task = document.getElementById('service-task').value;
+        const date = document.getElementById('service-date').value;
+        const time = document.getElementById('service-time').value;
+
+        let text = `🛠 **ЗАПИСЬ В СЕРВИС**\n🔧 Работа: ${task}\n📅 Дата: ${date}\n⏰ Время: ${time}`;
+        
+        await fetch(`https://telegram.org{BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(text)}&parse_mode=Markdown`);
+        alert('Вы записаны!');
+        location.reload();
+    }
+</script>
 
 </body>
 </html>
